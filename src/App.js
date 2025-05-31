@@ -9,7 +9,7 @@ import Navbar from './components/Navbar/Navbar';
 
 function App() {
   // ログイン状態
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(localStorage.getItem('isAuth'));
 
   return (
     <Router>
