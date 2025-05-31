@@ -1,23 +1,38 @@
-import React from 'react'
-import './Home.css'; 
+import React, { useEffect, useState } from "react";
+import "./Home.css";
+import { getDocs } from "firebase/firestore";
+import { collection } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Home = () => {
-  return (
-    <div className='homePage'>
-      <div className='postContainer'>
-        <div className='postHeader'>
-          <h1>タイトル</h1>
-        </div>
-        <div className="postTextContainer">
-          今はReactの学習中です。これから頑張ってエンジニアとして成長していきたいと思います。
-        </div>
-        <div className="nameAndDeleteButton">
-          <h3>@Kosei</h3>
-          <button>削除</button>
-        </div>
-      </div>
-    </div>
-  )
-}
+  const [postList, setPostList] = useState([]);
 
-export default Home
+  useEffect(() => {
+    const getPosts = async () => {
+      const data = await getDocs(collection(db, "postData"));
+      setPostList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    getPosts();
+  }, []);
+
+  return (
+    <div className="homePage">
+      {postList.map((post) => {
+        return (
+          <div className="postContainer" key={post.id}>
+            <div className="postHeader">
+              <h1>{post.title}</h1>
+            </div>
+            <div className="postTextContainer">{post.postText}</div>
+            <div className="nameAndDeleteButton">
+              <h3>@{post.author.username}</h3>
+              <button>削除</button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default Home;
